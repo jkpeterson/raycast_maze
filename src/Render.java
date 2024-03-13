@@ -1,5 +1,4 @@
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,24 +7,30 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class Render extends Application {
-    private static final int SCREEN_WIDTH = 800;
-    private static final int SCREEN_HEIGHT = 600;
-    private static int MAP_WIDTH;
-    private static int MAP_HEIGHT;
-    private static int[][] worldMap;
-
-    //starting position
-    private static double posX, posY;
-    private double dirX = -1, dirY = 0;
-    private double planeX = 0, planeY = 0.66;
-    private boolean up, down, left, right, turnRight, turnLeft;
+public class Render {
+    private Player player;
+    private CameraPlane cameraPlane;
+    private int[][] worldMap;
+    private int mapWidth;
+    private int mapHeight;
+    private int screenWidth;
+    private int screenHeight;
 
     private GraphicsContext gc;
+    private boolean up, down, left, right, turnRight, turnLeft;
 
-    @Override
+    public Render(Player player, CameraPlane cameraPlane, int[][] worldMap, int mapWidth, int mapHeight, int screenWidth, int screenHeight) {
+        this.player = player;
+        this.cameraPlane = cameraPlane;
+        this.worldMap = worldMap;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+    }
+
     public void start(Stage primaryStage) {
-        Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Canvas canvas = new Canvas(screenWidth, screenHeight);
         gc = canvas.getGraphicsContext2D();
 
         Pane root = new Pane(canvas);
@@ -48,55 +53,45 @@ public class Render extends Application {
             if (e.getCode() == KeyCode.Q) turnLeft = false;
         });
 
-        primaryStage.setTitle("Raycaster");
+        primaryStage.setTitle("Raycaster Maze");
         primaryStage.setScene(scene);
         primaryStage.show();
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
-                double moveSpeed = 0.05;
-                double rotSpeed =  0.02;
+                double moveSpeed = 0.08;
+                double rotSpeed = 0.02;
 
                 if (up) {
-                    movePlayer(moveSpeed, 0);
+                    player.moveForward(moveSpeed, cameraPlane.getDirX(), cameraPlane.getDirY(), mapWidth, mapHeight, worldMap);
                 }
                 if (down) {
-                    movePlayer(-moveSpeed, 0);
+                    player.moveBackward(moveSpeed, cameraPlane.getDirX(), cameraPlane.getDirY(), mapWidth, mapHeight, worldMap);
                 }
                 if (left) {
-                    movePlayer(0, -moveSpeed);
+                    player.strafeLeft(moveSpeed, cameraPlane.getDirX(), cameraPlane.getDirY(), mapWidth, mapHeight, worldMap);
                 }
                 if (right) {
-                    movePlayer(0, moveSpeed);
+                    player.strafeRight(moveSpeed, cameraPlane.getDirX(), cameraPlane.getDirY(), mapWidth, mapHeight, worldMap);
                 }
                 if (turnRight) {
-                    double oldDirX = dirX;
-                    dirX = dirX * Math.cos(-rotSpeed) - dirY * Math.sin(-rotSpeed);
-                    dirY = oldDirX * Math.sin(-rotSpeed) + dirY * Math.cos(-rotSpeed);
-                    double oldPlaneX = planeX;
-                    planeX = planeX * Math.cos(-rotSpeed) - planeY * Math.sin(-rotSpeed);
-                    planeY = oldPlaneX * Math.sin(-rotSpeed) + planeY * Math.cos(-rotSpeed);
+                    cameraPlane.rotateRight(rotSpeed);
                 }
                 if (turnLeft) {
-                    double oldDirX = dirX;
-                    dirX = dirX * Math.cos(rotSpeed) - dirY * Math.sin(rotSpeed);
-                    dirY = oldDirX * Math.sin(rotSpeed) + dirY * Math.cos(rotSpeed);
-                    double oldPlaneX = planeX;
-                    planeX = planeX * Math.cos(rotSpeed) - planeY * Math.sin(rotSpeed);
-                    planeY = oldPlaneX * Math.sin(rotSpeed) + planeY * Math.cos(rotSpeed);
+                    cameraPlane.rotateLeft(rotSpeed);
                 }
 
-                gc.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+                gc.clearRect(0, 0, screenWidth, screenHeight);
+                Texture.drawFloorAndCeiling(gc, screenWidth, screenHeight);
 
-                for (int x = 0; x < SCREEN_WIDTH; x++) {
-                    double cameraX = 2 * x / (double) SCREEN_WIDTH - 1;
-                    double rayDirX = dirX + planeX * cameraX;
-                    double rayDirY = dirY + planeY * cameraX;
+                for (int x = 0; x < screenWidth; x++) {
+                    double cameraX = 2 * x / (double) screenWidth - 1;
+                    double rayDirX = cameraPlane.getDirX() + cameraPlane.getPlaneX() * cameraX;
+                    double rayDirY = cameraPlane.getDirY() + cameraPlane.getPlaneY() * cameraX;
 
-                    int mapX = (int) posX;
-                    int mapY = (int) posY;
+                    int mapX = (int) player.getPosX();
+                    int mapY = (int) player.getPosY();
 
                     double sideDistX;
                     double sideDistY;
@@ -114,19 +109,18 @@ public class Render extends Application {
 
                     if (rayDirX < 0) {
                         stepX = -1;
-                        sideDistX = (posX - mapX) * deltaDistX;
+                        sideDistX = (player.getPosX() - mapX) * deltaDistX;
                     } else {
                         stepX = 1;
-                        sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+                        sideDistX = (mapX + 1.0 - player.getPosX()) * deltaDistX;
                     }
                     if (rayDirY < 0) {
                         stepY = -1;
-                        sideDistY = (posY - mapY) * deltaDistY;
+                        sideDistY = (player.getPosY() - mapY) * deltaDistY;
                     } else {
                         stepY = 1;
-                        sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+                        sideDistY = (mapY + 1.0 - player.getPosY()) * deltaDistY;
                     }
-
 
                     while (hit == 0) {
                         if (sideDistX < sideDistY) {
@@ -144,20 +138,14 @@ public class Render extends Application {
                     if (side == 0) perpWallDist = (sideDistX - deltaDistX);
                     else perpWallDist = (sideDistY - deltaDistY);
 
-                    int lineHeight = (int) (SCREEN_HEIGHT / perpWallDist);
+                    int lineHeight = (int) (screenHeight / perpWallDist);
 
-                    int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
+                    int drawStart = -lineHeight / 2 + screenHeight / 2;
                     if (drawStart < 0) drawStart = 0;
-                    int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-                    if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
+                    int drawEnd = lineHeight / 2 + screenHeight / 2;
+                    if (drawEnd >= screenHeight) drawEnd = screenHeight - 1;
 
-                    Color color = switch (worldMap[mapX][mapY]) {
-                        case 1 -> Color.RED;
-                        case 2 -> Color.GREEN;
-                        case 3 -> Color.BLUE;
-                        case 4 -> Color.ORANGE;
-                        default -> Color.YELLOW;
-                    };
+                    Color color = Texture.getColor(worldMap[mapX][mapY]);
 
                     if (side == 1) color = color.darker();
 
@@ -168,25 +156,5 @@ public class Render extends Application {
         };
 
         timer.start();
-    }
-
-    private void movePlayer(double xOffset, double yOffset) {
-        double newX = posX + xOffset * dirX + yOffset * planeX;
-        double newY = posY + xOffset * dirY + yOffset * planeY;
-        if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && worldMap[(int) newX][(int) newY] == 0) {
-            posX = newX;
-            posY = newY;
-        }
-    }
-
-    public static void main(String[] args) {
-        MazeBuilder.readFile("resources/Maps/demoMap1.txt");
-        posX = MazeBuilder.getStartX();
-        posY = MazeBuilder.getStartY();
-        MAP_WIDTH = MazeBuilder.getRows();
-        MAP_HEIGHT = MazeBuilder.getColumns();
-        worldMap = MazeBuilder.getMaze();
-        System.out.println("Use <wasd> to walk, <qe> to turn");
-        launch(args);
     }
 }
