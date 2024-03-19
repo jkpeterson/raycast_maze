@@ -38,9 +38,4 @@ public class MazeBuilder {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        String filename = "resources/Maps/demoMap.txt";
-        readFile(filename);
-    }
 }
