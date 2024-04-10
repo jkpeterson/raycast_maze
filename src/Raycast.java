@@ -48,6 +48,8 @@ public class Raycast extends Application {
     private boolean up, down, right, left;
 
     private GraphicsContext gc;
+    private long lastTime = System.nanoTime();
+    private double deltaTime = 0;
 
     @Override
     public void start(Stage primaryStage) {
@@ -78,8 +80,13 @@ public class Raycast extends Application {
             @Override
             public void handle(long now) {
 
-                double moveSpeed = 0.05;
-                double rotSpeed =  0.02;
+                long currentTime = System.nanoTime();
+                deltaTime = (currentTime - lastTime) / 1_000_000_000.0;
+                lastTime = currentTime;
+
+                // Calculate movement and rotation speeds
+                double moveSpeed = deltaTime * 5.0;
+                double rotSpeed = deltaTime * 3.0;
 
                 if (up) {
                     double newX = posX + dirX * moveSpeed;
