@@ -23,6 +23,18 @@ public class Player {
 	public double getY() {
 		return y;
 	}
+	public double getDirX() {
+		return Math.cos(Math.toRadians(angle));
+	}
+	public double getDirY() {
+		return Math.sin(Math.toRadians(angle));
+	}
+	public double getPlaneX() {
+		return -Math.sin(Math.toRadians(angle));
+	}
+	public double getPlaneY() {
+		return Math.cos(Math.toRadians(angle));
+	}
 	public int getAngle() {
 		return angle;
 	}
@@ -45,4 +57,5 @@ public class Player {
 		}
 		
 	}
+
 }

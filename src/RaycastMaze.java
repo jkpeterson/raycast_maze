@@ -12,6 +12,9 @@ public class RaycastMaze extends Application {
 	
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
+
+    private CameraPlane cameraPlane;
+    private Player player;
 	public static final long LOOP_LENGTH = 17;
 	private GraphicsContext gc;
 	boolean up, down, right, left;
@@ -36,6 +39,14 @@ public class RaycastMaze extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+        MazeBuilder.readFile("resources/Maps/demoMap.txt");
+        int mapWidth = MazeBuilder.getRows();
+        int mapHeight = MazeBuilder.getColumns();
+        int[][] worldMap = MazeBuilder.getMaze();
+
+        player = new Player();
+        cameraPlane = new CameraPlane(player.getX(), player.getY(), player.getDirX(), player.getDirY(), player.getPlaneX(), player.getPlaneY());
+
 		Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
@@ -65,6 +76,7 @@ public class RaycastMaze extends Application {
                 lastTime = currentTime;
 	    		//do stuff
 	    		p.move(deltaTime,up,down,right,left);
+                cameraPlane.update(deltaTime, worldMap, mapWidth, mapHeight, up, down, right, left);
 	    		sleep(LOOP_LENGTH - (long)deltaTime);
 			}
         	
