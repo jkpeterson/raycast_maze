@@ -3,10 +3,10 @@ import java.io.FileReader;
 import java.util.Scanner;
 
 public class MazeBuilder {
-     //Number of rows and columns in the maze.
-    public static int rows, columns;
+    //Number of rows, columns, and starting position in the maze.
+    private static int rows, columns;
     //2D array representing the maze.
-    public static int[][] maze;
+    private static int[][] maze;
 
     /**
      * Reads map data from a txt file and populates the maze array.
@@ -37,5 +37,15 @@ public class MazeBuilder {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int[][] getMaze() {
+        return maze;
+    }
+    public static int getRows() {
+        return rows;
+    }
+    public static int getColumns() {
+        return columns;
     }
 }
