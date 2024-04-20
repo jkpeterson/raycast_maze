@@ -28,7 +28,7 @@ public class Player {
 	}
 	
 	public void move(double deltaTime, Boolean up, Boolean down, Boolean right, Boolean left) {
-		System.out.println(angle);
+		//System.out.println(angle);
         if (left) {
         	angle -= TURN_SPEED * deltaTime;
         }
