@@ -10,11 +10,13 @@ public class Player {
 	public static int angle;
 	static final int TURN_SPEED = 100;
 	static final int MOVE_SPEED = 1;
+	static final int MAP_WIDTH = 24;
+	static final int MAP_HEIGHT = 24;
 	static boolean up, down, right, left;
 	
 	public Player() {
-		x = 0;
-		y = 0;
+		x = 12;
+		y = 12;
 		angle = 0;
 	}
 	public double getX() {
@@ -39,21 +41,35 @@ public class Player {
 		return angle;
 	}
 	
-	public void move(double deltaTime, Boolean up, Boolean down, Boolean right, Boolean left) {
+	public void move(double deltaTime, int[][] worldMap, Boolean up, Boolean down, Boolean right, Boolean left) {
 		//System.out.println(angle);
         if (left) {
         	angle -= TURN_SPEED * deltaTime;
+        	if(angle < 0) {
+        		angle += 360;
+        	}
         }
 		if (right) {
 			angle += TURN_SPEED * deltaTime;
+			if(angle >= 360) {
+				angle -= 360;
+			}
 		}
 		if (up) {
-			x += MOVE_SPEED * deltaTime * Math.cos(angle);
-			y += MOVE_SPEED * deltaTime * Math.sin(angle);			
+            double newX = x + (MOVE_SPEED * deltaTime * getDirX());
+            double newY = y + (MOVE_SPEED * deltaTime * getDirY());
+            if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && worldMap[(int) newX][(int) newY] == 0) {
+                x = newX;
+                y = newY;
+            }
 		}
 		else if (down) {
-			x -= MOVE_SPEED * deltaTime * Math.cos(angle);
-			y -= MOVE_SPEED * deltaTime * Math.sin(angle);			
+            double newX = x - (MOVE_SPEED * deltaTime * getDirX());
+            double newY = y - (MOVE_SPEED * deltaTime * getDirY());
+            if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && worldMap[(int) newX][(int) newY] == 0) {
+                x = newX;
+                y = newY;
+            }		
 		}
 		
 	}

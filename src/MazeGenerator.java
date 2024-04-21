@@ -14,7 +14,7 @@ public class MazeGenerator {
 		}
 	}
 
-	public void makeNewMaze() {
+	public int[][] makeNewMaze() {
 		Random rand = new Random();
 		int currX = rand.nextInt(WIDTH);
 		int currY = rand.nextInt(HEIGHT);
@@ -51,7 +51,7 @@ public class MazeGenerator {
 			baseMap[WIDTH-1][y] = 1;
 			baseMap[0][y] = 1;
 		}
-		printMaze();
+		return baseMap;
 
 		
 	}

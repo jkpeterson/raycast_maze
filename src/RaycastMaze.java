@@ -10,11 +10,10 @@ import javafx.stage.Stage;
 
 public class RaycastMaze extends Application {
 	
-    private static final int SCREEN_WIDTH = 800;
-    private static final int SCREEN_HEIGHT = 600;
-
-    private CameraPlane cameraPlane;
+    public static final int SCREEN_WIDTH = 800;
+    public static final int SCREEN_HEIGHT = 600;
     private Player player;
+    private Render render;
 	public static final long LOOP_LENGTH = 17;
 	private GraphicsContext gc;
 	boolean up, down, right, left;
@@ -40,13 +39,15 @@ public class RaycastMaze extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         MazeBuilder.readFile("resources/Maps/demoMap.txt");
-        int mapWidth = MazeBuilder.getRows();
-        int mapHeight = MazeBuilder.getColumns();
-        int[][] worldMap = MazeBuilder.getMaze();
+        //int mapWidth = MazeBuilder.getRows();
+        //int mapHeight = MazeBuilder.getColumns();
+        //int[][] worldMap = MazeBuilder.getMaze();
+        MazeGenerator mg = new MazeGenerator();
+        int[][] worldMap = mg.makeNewMaze();
 
         player = new Player();
-        cameraPlane = new CameraPlane(player.getX(), player.getY(), player.getDirX(), player.getDirY(), player.getPlaneX(), player.getPlaneY());
-
+        render = new Render();
+        //cameraPlane = new CameraPlane(player.getX(), player.getY(), player.getDirX(), player.getDirY(), player.getPlaneX(), player.getPlaneY());
 		Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
@@ -54,7 +55,6 @@ public class RaycastMaze extends Application {
         primaryStage.setTitle("Raycaster");
         primaryStage.setScene(scene);
         primaryStage.show();
-    	Player p = new Player();
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.W) up = true;
             if (e.getCode() == KeyCode.S) down = true;
@@ -75,8 +75,10 @@ public class RaycastMaze extends Application {
                 deltaTime = (currentTime - lastTime) / 1_000.0;
                 lastTime = currentTime;
 	    		//do stuff
-	    		p.move(deltaTime,up,down,right,left);
-                cameraPlane.update(deltaTime, worldMap, mapWidth, mapHeight, up, down, right, left);
+        		gc.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+                render.drawFloorAndCeiling(gc);
+	    		player.move(deltaTime,worldMap,up,down,right,left);
+	    		render.update(player, worldMap, gc);
 	    		sleep(LOOP_LENGTH - (long)deltaTime);
 			}
         	
