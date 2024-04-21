@@ -5,11 +5,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class RaycastMaze extends Application {
-	
+
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 600;
     private Player player;
@@ -19,40 +18,43 @@ public class RaycastMaze extends Application {
 	boolean up, down, right, left;
     private long lastTime = System.currentTimeMillis();
 	private double deltaTime = 0;
-    
-    public static void gameLoop() {
+    private boolean isRandomMaze;
 
-    		
-    }
-    
     private static void sleep(long time)
     {
         if(time > 0)
             try {
                 Thread.sleep(time);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
     }
 
+    public RaycastMaze(boolean isRandomMaze) {
+        this.isRandomMaze = isRandomMaze;
+    }
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-        MazeBuilder.readFile("resources/Maps/demoMap.txt");
-        //int mapWidth = MazeBuilder.getRows();
-        //int mapHeight = MazeBuilder.getColumns();
-        //int[][] worldMap = MazeBuilder.getMaze();
-        MazeGenerator mg = new MazeGenerator();
-        int[][] worldMap = mg.makeNewMaze();
+
+        int[][] worldMap;
+        if (isRandomMaze) {
+            // Generate a random maze
+            MazeGenerator mg = new MazeGenerator();
+            worldMap = mg.makeNewMaze();
+        } else {
+            // Load a maze from the file
+            MazeBuilder.readFile("resources/Maps/demoMap.txt");
+            worldMap = MazeBuilder.getMaze();
+        }
 
         player = new Player();
         render = new Render();
-        //cameraPlane = new CameraPlane(player.getX(), player.getY(), player.getDirX(), player.getDirY(), player.getPlaneX(), player.getPlaneY());
 		Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
         Scene scene = new Scene(root);
-        primaryStage.setTitle("Raycaster");
+        primaryStage.setTitle("Raycast 3D Maze");
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setOnKeyPressed(e -> {
@@ -81,12 +83,10 @@ public class RaycastMaze extends Application {
 	    		render.update(player, worldMap, gc);
 	    		sleep(LOOP_LENGTH - (long)deltaTime);
 			}
-        	
+
         };
         timer.start();
-		
+
 	}
-    public static void main(String[] args) {
-        launch();
-    }
+
 }
