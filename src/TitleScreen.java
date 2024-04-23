@@ -13,6 +13,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
+
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -51,11 +55,11 @@ public class TitleScreen extends Application {
         root = new BorderPane(mainMenu);
 
         // Load background image
-        Image backgroundImage = new Image("title_background.png");
+        Image backgroundImage = new Image("Images/title_background.png");
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));
         root.setBackground(new Background(background));
 
-        Scene scene = new Scene(root, RaycastMaze.SCREEN_WIDTH, RaycastMaze.SCREEN_HEIGHT);
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setTitle("Raycast 3D Maze");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -119,22 +123,33 @@ public class TitleScreen extends Application {
     }
 
     private void showOptions() {
-        List<String> resolutions = Arrays.asList("800x600", "1024x768", "1280x720", "1920x1080");
-        VBox resolutionButtons = new VBox(20);
-        resolutionButtons.setAlignment(Pos.CENTER);
-        for (String resolution : resolutions) {
-            Button resolutionButton = textButton(resolution);
-            resolutionButton.setOnAction(e -> {
-                //change resolution
-            });
-            resolutionButtons.getChildren().add(resolutionButton);
-        }
+        Text optionsTitle = new Text("Options");
+        optionsTitle.setFont(new Font(25));
+        optionsTitle.setStyle("-fx-fill: white;");
+        Text resolutionLabel = new Text("Resolution");
+        resolutionLabel.setFont(new Font(15));
+        resolutionLabel.setStyle("-fx-fill: #CCCCCC;");
+        List<String> resolutions = Arrays.asList("800x600", "1024x768", "1280x720", "1920x1080", "2560x1440");
+        ObservableList<String> options = FXCollections.observableArrayList(resolutions);
+        ComboBox<String> resolutionComboBox = new ComboBox<>(options);
+        resolutionComboBox.setValue("Select");
+
+        Button applyButton = new Button("Apply");
+        applyButton.setOnAction(e -> {
+            String selectedResolution = resolutionComboBox.getValue();
+            if (!selectedResolution.equals("Select")) {
+                String[] parts = selectedResolution.split("x");
+                int width = Integer.parseInt(parts[0]);
+                int height = Integer.parseInt(parts[1]);
+                RaycastMaze.setScreenResolution(width, height);
+            }
+        });
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> root.setCenter(mainMenu));
 
         VBox optionsPane = new VBox(20);
-        optionsPane.getChildren().addAll(resolutionButtons, backButton);
+        optionsPane.getChildren().addAll(optionsTitle, resolutionLabel, resolutionComboBox, applyButton, backButton);
         optionsPane.setAlignment(Pos.CENTER);
 
         root.setCenter(optionsPane);

@@ -14,8 +14,8 @@ import java.util.Objects;
 
 public class RaycastMaze extends Application {
 
-    public static final int SCREEN_WIDTH = 800;
-    public static final int SCREEN_HEIGHT = 600;
+    public static int SCREEN_WIDTH = 800;
+    public static int SCREEN_HEIGHT = 600;
     private Player player;
     private Render render;
     public static final long LOOP_LENGTH = 17;
@@ -39,6 +39,11 @@ public class RaycastMaze extends Application {
     public RaycastMaze(boolean isRandomMaze, String selectedMap) {
         this.isRandomMaze = isRandomMaze;
         this.selectedMap = selectedMap;
+    }
+
+    public static void setScreenResolution(int width, int height) {
+        SCREEN_WIDTH = width;
+        SCREEN_HEIGHT = height;
     }
 
     @Override
@@ -85,7 +90,7 @@ public class RaycastMaze extends Application {
     }
 
     private Button backButton(Stage primaryStage) {
-        Image exitIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("exit_icon.png")));
+        Image exitIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("Images/exit_icon.png")));
         ImageView exitImageView = new ImageView(exitIcon);
         exitImageView.setFitWidth(30);
         exitImageView.setFitHeight(30);
