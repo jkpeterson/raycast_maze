@@ -35,12 +35,15 @@ public class TitleScreen extends Application {
         Button playButton = textButton("Play");
         Button optionsButton = textButton("Options");
         Button creditsButton = textButton("Credits");
+        Button guideButton = textButton("Guide");
         Button quitButton = textButton("Quit Game");
 
         // Button listeners
         playButton.setOnAction(e -> showPlay());
-        creditsButton.setOnAction(e -> showCredits());
         optionsButton.setOnAction(e -> showOptions());
+        creditsButton.setOnAction(e -> showCredits());
+        guideButton.setOnAction(e -> showGuide());
+
         quitButton.setOnAction(e -> primaryStage.close());
 
         // Title
@@ -49,7 +52,7 @@ public class TitleScreen extends Application {
         title.setStyle("-fx-fill: white;");
 
         // Layout container
-        mainMenu = new VBox(20, title, playButton, optionsButton, creditsButton, quitButton);
+        mainMenu = new VBox(15, title, playButton, optionsButton, creditsButton, guideButton, quitButton);
         mainMenu.setAlignment(Pos.CENTER);
 
         root = new BorderPane(mainMenu);
@@ -118,7 +121,6 @@ public class TitleScreen extends Application {
 
         VBox creditsPane = new VBox(20, randomMazeButton, mapButtons, backButton);
         creditsPane.setAlignment(Pos.CENTER);
-
         root.setCenter(creditsPane);
     }
 
@@ -151,10 +153,22 @@ public class TitleScreen extends Application {
         VBox optionsPane = new VBox(20);
         optionsPane.getChildren().addAll(optionsTitle, resolutionLabel, resolutionComboBox, applyButton, backButton);
         optionsPane.setAlignment(Pos.CENTER);
-
         root.setCenter(optionsPane);
     }
 
+    private void showGuide() {
+        Text creditsText = new Text("Guide:\n\nMovement Controls:\nW: Move Forward\nS: Move Backward\nCamera Rotation Controls:\nA: Rotate Camera Left\nD: Rotate Camera Right\nGameplay Tips:\nNavigate through the maze cautiously, pay attention to details in the environment.");
+        creditsText.setFont(new Font(15));
+        creditsText.setStyle("-fx-fill: white;");
+
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> root.setCenter(mainMenu));
+
+        VBox creditsPane = new VBox(20, creditsText, backButton);
+        creditsPane.setAlignment(Pos.CENTER);
+        root.setCenter(creditsPane);
+    }
 
     private void showCredits() {
         Text creditsText = new Text("Credits:\n");
@@ -175,7 +189,6 @@ public class TitleScreen extends Application {
 
         VBox creditsPane = new VBox(20, creditsText, developers, version, backButton);
         creditsPane.setAlignment(Pos.CENTER);
-
         root.setCenter(creditsPane);
     }
 
