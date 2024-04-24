@@ -64,18 +64,18 @@ public class Player {
 		if (up) {
             double newX = x + (MOVE_SPEED * deltaTime * getDirX());
             double newY = y + (MOVE_SPEED * deltaTime * getDirY());
-            if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && worldMap[(int) newX][(int) newY] == 0) {
-                x = newX;
-                y = newY;
-            }
+			if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && (worldMap[(int) newX][(int) newY] == 0 || worldMap[(int) newX][(int) newY] == 2)) {
+				x = newX;
+				y = newY;
+			}
 		}
 		else if (down) {
             double newX = x - (MOVE_SPEED * deltaTime * getDirX());
             double newY = y - (MOVE_SPEED * deltaTime * getDirY());
-            if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && worldMap[(int) newX][(int) newY] == 0) {
-                x = newX;
-                y = newY;
-            }		
+			if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && (worldMap[(int) newX][(int) newY] == 0 || worldMap[(int) newX][(int) newY] == 2)) {
+				x = newX;
+				y = newY;
+			}
 		}
 		if (worldMap[(int)x][(int)y] == 2) {
 			System.out.println("exit");
