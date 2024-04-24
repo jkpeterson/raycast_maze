@@ -26,7 +26,6 @@ public class MazeBuilder {
                     maze[a][b] = input.nextInt();
                 }
             }
-            System.out.println(filename + " generated");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

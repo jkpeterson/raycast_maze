@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,6 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -22,6 +26,8 @@ public class RaycastMaze extends Application {
     private GraphicsContext gc;
     boolean up, down, right, left;
     private long lastTime = System.currentTimeMillis();
+    private long startTime;
+    private long endTime;
     private double deltaTime = 0;
     private boolean isRandomMaze;
     private String selectedMap;
@@ -54,7 +60,7 @@ public class RaycastMaze extends Application {
         Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
-        
+
         int[][] worldMap;
         if (isRandomMaze) {
             // Generate a random maze
@@ -87,7 +93,7 @@ public class RaycastMaze extends Application {
             if (e.getCode() == KeyCode.D) right = false;
             if (e.getCode() == KeyCode.A) left = false;
         });
-        startGameLoop(worldMap);
+        startGameLoop(worldMap, primaryStage);
     }
 
     private Button backButton(Stage primaryStage) {
@@ -112,9 +118,11 @@ public class RaycastMaze extends Application {
         return backButton;
     }
 
-    private void startGameLoop(int[][] worldMap) {
-        timer = new AnimationTimer() {
+    private void startGameLoop(int[][] worldMap, Stage primaryStage) {
+        Player.setReachedExit(false);
+        startTime = System.currentTimeMillis();
 
+        timer = new AnimationTimer() {
             @Override
             public void handle(long arg0) {
                 long currentTime = System.currentTimeMillis();
@@ -124,6 +132,12 @@ public class RaycastMaze extends Application {
                 gc.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
                 render.drawFloorAndCeiling(gc);
                 player.move(deltaTime, worldMap, up, down, right, left);
+                if (Player.reachedExit) {
+                    endTime = System.currentTimeMillis();
+                    primaryStage.close();
+                    showExit();
+                    stopGameLoop();
+                }
                 render.update(player, worldMap, gc);
                 sleep(LOOP_LENGTH - (long) deltaTime);
             }
@@ -136,6 +150,10 @@ public class RaycastMaze extends Application {
         if (timer != null) {
             timer.stop();
         }
+    }
+
+    private void showExit() {
+        ExitScreen.showExit(startTime, endTime);
     }
 
 }
