@@ -26,16 +26,19 @@ public class MazeBuilder {
                     maze[a][b] = input.nextInt();
                 }
             }
-            // print maze
-            for (int a = 0; a < rows; a++) {
-                for (int b = 0; b < columns; b++) {
-                    System.out.print(" " + maze[a][b]);
-                }
-                System.out.println();
-            }
             System.out.println(filename + " generated");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void printMaze() {
+        // print maze
+        for (int a = 0; a < rows; a++) {
+            for (int b = 0; b < columns; b++) {
+                System.out.print(" " + maze[a][b]);
+            }
+            System.out.println();
         }
     }
 
