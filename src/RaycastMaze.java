@@ -49,22 +49,23 @@ public class RaycastMaze extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        int[][] worldMap;
-        if (isRandomMaze) {
-            // Generate a random maze
-            MazeGenerator mg = new MazeGenerator();
-            worldMap = mg.makeNewMaze();
-        } else {
-            // Load a maze from the file
-            MazeBuilder.readFile("resources/Maps/" + selectedMap + ".txt");
-            worldMap = MazeBuilder.getMaze();
-        }
-
         player = new Player();
         render = new Render();
         Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
+        
+        int[][] worldMap;
+        if (isRandomMaze) {
+            // Generate a random maze
+            MazeGenerator mg = new MazeGenerator();
+            worldMap = mg.makeNewMaze();
+            player.setStartPosition(mg.startX);
+        } else {
+            // Load a maze from the file
+            MazeBuilder.readFile("resources/Maps/" + selectedMap + ".txt");
+            worldMap = MazeBuilder.getMaze();
+        }
 
         // Exit button to Title Screen
         Button exitButton = backButton(primaryStage);

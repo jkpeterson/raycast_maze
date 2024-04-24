@@ -13,6 +13,8 @@ public class Player {
 	static final int MAP_WIDTH = 24;
 	static final int MAP_HEIGHT = 24;
 	static boolean up, down, right, left;
+	private int exitX;
+	private int exitY;
 	
 	public Player() {
 		x = 12;
@@ -40,9 +42,13 @@ public class Player {
 	public int getAngle() {
 		return angle;
 	}
-	
+	public void setStartPosition(double startX) {
+		x = startX;
+		y = 1.5;
+		angle = 180;
+	}
 	public void move(double deltaTime, int[][] worldMap, Boolean up, Boolean down, Boolean right, Boolean left) {
-		//System.out.println(angle);
+		//System.out.println(x+","+y+" Angle: "+angle);
         if (left) {
         	angle -= TURN_SPEED * deltaTime;
         	if(angle < 0) {
@@ -70,6 +76,9 @@ public class Player {
                 x = newX;
                 y = newY;
             }		
+		}
+		if (worldMap[(int)x][(int)y] == 2) {
+			System.out.println("exit");
 		}
 		
 	}

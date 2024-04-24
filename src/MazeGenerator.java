@@ -5,6 +5,8 @@ public class MazeGenerator {
 	final int WIDTH = 24;
 	final int HEIGHT = 24;
 	private int[][] baseMap = new int[WIDTH][HEIGHT];
+	public double startX;
+	private int exitX;
 	
 	public MazeGenerator() {
 		for(int i = 0; i < WIDTH; i++) {
@@ -17,7 +19,8 @@ public class MazeGenerator {
 	public int[][] makeNewMaze() {
 		Random rand = new Random();
 		int currX = rand.nextInt(WIDTH);
-		int currY = rand.nextInt(HEIGHT);
+		int currY = 1;
+		startX = (double)currX;
 		LinkedList<int[]> cellsToCheck = new LinkedList<>();
 		cellsToCheck.add(new int[]{currX, currY, currX, currY});
 		while(!cellsToCheck.isEmpty()) {
@@ -51,6 +54,13 @@ public class MazeGenerator {
 			baseMap[WIDTH-1][y] = 1;
 			baseMap[0][y] = 1;
 		}
+		for(int x = 0; x < WIDTH; x++) {
+			if (baseMap[x][HEIGHT-2] == 0) {
+				exitX = x;
+			}
+		}
+		baseMap[(int)exitX][HEIGHT-2] = 2;
+		printMaze();
 		return baseMap;
 
 		
