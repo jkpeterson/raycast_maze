@@ -71,6 +71,7 @@ public class RaycastMaze extends Application {
             // Load a maze from the file
             MazeBuilder.readFile("resources/Maps/" + selectedMap + ".txt");
             worldMap = MazeBuilder.getMaze();
+            player.setStartPosition(MazeBuilder.getRows()-1.5);
         }
 
         // Exit button to Title Screen
