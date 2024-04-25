@@ -151,8 +151,8 @@ public class Render {
     }
     public static Color getColor(int tileType) {
         return switch (tileType) {
-            case 1 -> Color.RED;
-            case 2 -> Color.GREEN;
+            case 1 -> Color.RED;    // wall
+            case 2 -> Color.GREEN;  // exit
             case 3 -> Color.BLUE;
             case 4 -> Color.ORANGE;
             default -> Color.YELLOW;
