@@ -9,11 +9,17 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
 public class Render {
-	BufferedImage image;
+	BufferedImage[] textures = new BufferedImage[3];
+	Color[][] screen = new Color[RaycastMaze.SCREEN_WIDTH][RaycastMaze.SCREEN_HEIGHT];
+	int texHeight = 128;
+    int texWidth = 128;
 	
 	public Render() {
 		try {
-			image = ImageIO.read(new File("resources/Textures/tex1.png"));
+			BufferedImage wall = ImageIO.read(new File("resources/Textures/brick_mossy.png"));
+			BufferedImage door = ImageIO.read(new File("resources/Textures/door.png"));
+			textures[1] = wall;
+			textures[2] = door;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -22,29 +28,20 @@ public class Render {
 
 	public void update(Player player, int[][] worldMap, GraphicsContext gc) {
 		PixelWriter pw = gc.getPixelWriter();
-        for (int x = 0; x < RaycastMaze.SCREEN_WIDTH; x++) {
+		screen = new Color[RaycastMaze.SCREEN_WIDTH][RaycastMaze.SCREEN_HEIGHT];
+		for (int x = 0; x < RaycastMaze.SCREEN_WIDTH; x++) {
             double cameraX = 2 * x / (double) RaycastMaze.SCREEN_WIDTH - 1;
             double rayDirX = player.getDirX() + player.getPlaneX() * cameraX;
             double rayDirY = player.getDirY() + player.getPlaneY() * cameraX;
 
             int mapX = (int) player.getX();
             int mapY = (int) player.getY();
-            
-            double deltaDistX = 0;
-            double deltaDistY = 0;
 
-            if (rayDirX == 0) {
-            	deltaDistX = Double.POSITIVE_INFINITY;
-            }
-            else {
-            	deltaDistX = Math.abs(1 / rayDirX);
-            }
-            if (rayDirY == 0) {
-            	deltaDistX = Double.POSITIVE_INFINITY;
-            }
-            else {
-            	deltaDistY = Math.abs(1 / rayDirY);
-            }
+            double sideDistX;
+            double sideDistY;
+
+            double deltaDistX = (rayDirX == 0) ? Double.POSITIVE_INFINITY : Math.abs(1 / rayDirX);
+            double deltaDistY = (rayDirY == 0) ? Double.POSITIVE_INFINITY : Math.abs(1 / rayDirY);
 
             double perpWallDist;
 
@@ -53,9 +50,6 @@ public class Render {
 
             int hit = 0;
             int side = 0;
-            
-            double sideDistX = 0;
-            double sideDistY = 0;
 
             if (rayDirX < 0) {
                 stepX = -1;
@@ -72,6 +66,7 @@ public class Render {
                 sideDistY = (mapY + 1.0 - player.getY()) * deltaDistY;
             }
 
+
             while (hit == 0) {
                 if (sideDistX < sideDistY) {
                     sideDistX += deltaDistX;
@@ -84,61 +79,69 @@ public class Render {
                 }
                 if (worldMap[mapX][mapY] > 0) hit = 1;
             }
-            double wallX;
-            if (side == 0) {
-            	perpWallDist = (sideDistX - deltaDistX);
-            	wallX = player.getY() + perpWallDist * rayDirY;
-            }
-            else {
-            	perpWallDist = (sideDistY - deltaDistY);
-            	wallX = player.getX() + perpWallDist * rayDirX;
-            }
-            wallX -= Math.floor((wallX));
+
+            if (side == 0) perpWallDist = (sideDistX - deltaDistX);
+            else perpWallDist = (sideDistY - deltaDistY);
 
             int lineHeight = (int) (RaycastMaze.SCREEN_HEIGHT / perpWallDist);
 
             int drawStart = -lineHeight / 2 + RaycastMaze.SCREEN_HEIGHT / 2;
-            if (drawStart < 0) {
-            	drawStart = 0;
-            }
+            if (drawStart < 0) drawStart = 0;
             int drawEnd = lineHeight / 2 + RaycastMaze.SCREEN_HEIGHT / 2;
-            if (drawEnd >= RaycastMaze.SCREEN_HEIGHT) {
-            	drawEnd = RaycastMaze.SCREEN_HEIGHT - 1;
+            if (drawEnd >= RaycastMaze.SCREEN_HEIGHT) drawEnd = RaycastMaze.SCREEN_HEIGHT - 1;
+            
+            //calculate value of wallX
+            double wallX; //where exactly the wall was hit
+            if (side == 0) {
+            	wallX = player.getY() + perpWallDist * rayDirY;
             }
-//            int texHeight = 128;
-//            int texWidth = 128;
-//            double texStep = 1.0 / (texHeight * lineHeight);
-//            double texPos = (drawStart - RaycastMaze.SCREEN_HEIGHT / 2 + lineHeight / 2) * texStep;
-//            int texX = (int)(wallX / texWidth);
-//            if(side == 0 && rayDirX > 0) {
-//            	texX = texWidth - texX - 1;
-//            }
-//            if(side == 1 && rayDirY < 0) {
-//            	texX = texWidth - texX - 1;
-//            }
-//            Color color = null;
-//            
-//            for (int y = drawStart; y < drawEnd; y++) {
-//                int texY = (int)texPos;
-//                texPos += texStep;
-//                int intColor = image.getRGB(texX,texY);
-//                int r = (intColor>>16)&0xFF;
-//                int g = (intColor>>8)&0xFF;
-//                int b = (intColor)&0xFF;
-//                color = Color.rgb(r, g, b);
-//                pw.setColor(x,y,color);
-//            }
-           Color color = getColor(worldMap[mapX][mapY]);
+            else {
+            	wallX = player.getX() + perpWallDist * rayDirX;
+            }
+            wallX -= Math.floor((wallX));
+            //x coordinate on the texture
+            int texX = (int)(wallX * (double)texWidth);
+            if(side == 0 && rayDirX > 0) {
+            	texX = texWidth - texX - 1;
+            }
+            if(side == 1 && rayDirY < 0) {
+            	texX = texWidth - texX - 1;
+            }
+            double texStep = 1.0 * texHeight / lineHeight;
+            double texPos = (drawStart - RaycastMaze.SCREEN_HEIGHT / 2 + lineHeight / 2) * texStep;
 
-           if (side == 1) {
-        	   color = color.darker();
-           }
-           gc.setFill(color);
-           gc.fillRect(x, drawStart, 1, drawEnd - drawStart);
+            for (int y = drawStart; y < drawEnd; y++) {
+				int texY = (int)texPos & (texHeight - 1);
+				texPos += texStep;
+				int intColor = textures[worldMap[mapX][mapY]].getRGB(texX,texY);
+				int r = (intColor>>16)&0xFF;
+				int g = (intColor>>8)&0xFF;
+				int b = (intColor)&0xFF;
+				Color color = Color.rgb(r, g, b);
+				  
+				screen[x][y] = color;
+            }
+            //Color color = getColor(worldMap[mapX][mapY]);
 
+            //if (side == 1) color = color.darker();
 
+            //gc.setFill(color);
+            //gc.fillRect(x, drawStart, 1, drawEnd - drawStart);
         }
-        //drawScreen(gc);
+		drawScreen(pw);
+            
+
+	}
+	public void drawScreen(PixelWriter pw) {
+		for(int x = 0; x<RaycastMaze.SCREEN_WIDTH; x++) {
+			for(int y = 0; y<RaycastMaze.SCREEN_HEIGHT; y++) {
+				Color color = screen[x][y];
+				if( color != null) {
+					pw.setColor(x,y,screen[x][y]);
+				}	
+			}
+		}
+		
 	}
     public void drawFloorAndCeiling(GraphicsContext gc) {
             // Set the floor color
