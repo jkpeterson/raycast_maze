@@ -119,11 +119,12 @@ public class TitleScreen extends Application {
         randomMazeButton.setOnAction(e -> startRandomMaze());
         backButton.setOnAction(e -> root.setCenter(mainMenu));
 
-        VBox creditsPane = new VBox(20, randomMazeButton, mapButtons, backButton);
-        creditsPane.setAlignment(Pos.CENTER);
-        root.setCenter(creditsPane);
+        VBox playPane = new VBox(20, randomMazeButton, mapButtons, backButton);
+        playPane.setAlignment(Pos.CENTER);
+        root.setCenter(playPane);
     }
 
+    private String selectedResolution = "Select";
     private void showOptions() {
         Text optionsTitle = new Text("Options");
         optionsTitle.setFont(new Font(25));
@@ -134,11 +135,11 @@ public class TitleScreen extends Application {
         List<String> resolutions = Arrays.asList("800x600", "1024x768", "1280x720", "1920x1080", "2560x1440");
         ObservableList<String> options = FXCollections.observableArrayList(resolutions);
         ComboBox<String> resolutionComboBox = new ComboBox<>(options);
-        resolutionComboBox.setValue("Select");
+        resolutionComboBox.setValue(selectedResolution);
 
         Button applyButton = new Button("Apply");
         applyButton.setOnAction(e -> {
-            String selectedResolution = resolutionComboBox.getValue();
+            selectedResolution = resolutionComboBox.getValue();
             if (!selectedResolution.equals("Select")) {
                 String[] parts = selectedResolution.split("x");
                 int width = Integer.parseInt(parts[0]);

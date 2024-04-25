@@ -1,7 +1,8 @@
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -17,10 +18,12 @@ public class ExitScreen {
 
         Text congratsText = new Text("Congratulations! You reached the exit.");
         congratsText.setFont(Font.font(20));
+        congratsText.setStyle("-fx-fill: white;");
 
         String elapsedTimeString = String.format("Time %02d : %02d", minutes, seconds);
         Text timeText = new Text(elapsedTimeString);
         timeText.setFont(Font.font(15));
+        timeText.setStyle("-fx-fill: white;");
 
         Button backToMainButton = new Button("Back to Main");
         backToMainButton.setOnAction(e -> {
@@ -29,6 +32,11 @@ public class ExitScreen {
         });
 
         endLayout.getChildren().addAll(congratsText, timeText, backToMainButton);
+
+        // Load background image
+        Image backgroundImage = new Image("Images/end_background.png");
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));
+        endLayout.setBackground(new Background(background));
 
         double currentWidth = primaryStage.getWidth();
         double currentHeight = primaryStage.getHeight();
