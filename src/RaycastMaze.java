@@ -135,9 +135,8 @@ public class RaycastMaze extends Application {
                 player.move(deltaTime, worldMap, up, down, right, left);
                 if (Player.reachedExit) {
                     endTime = System.currentTimeMillis();
-                    primaryStage.close();
-                    showExit();
                     stopGameLoop();
+                    ExitScreen.showExit(primaryStage, startTime, endTime);
                 }
                 render.update(player, worldMap, gc);
                 sleep(LOOP_LENGTH - (long) deltaTime);
@@ -153,8 +152,5 @@ public class RaycastMaze extends Application {
         }
     }
 
-    private void showExit() {
-        ExitScreen.showExit(startTime, endTime);
-    }
 
 }
