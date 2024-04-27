@@ -132,7 +132,7 @@ public class RaycastMaze extends Application {
                 if (Player.reachedExit) {
                     endTime = System.currentTimeMillis();
                     stopGameLoop();
-                    ExitScreen.showExit(primaryStage, startTime, endTime);
+                    ExitScreen.showExit(primaryStage, startTime, endTime, isRandomMaze);
                 }
                 render.update(player, worldMap, gc);
                 sleep(LOOP_LENGTH - (long) deltaTime);

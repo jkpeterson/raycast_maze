@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class ExitScreen {
-    public static void showExit(Stage primaryStage, long startTime, long endTime) {
+    public static void showExit(Stage primaryStage, long startTime, long endTime, Boolean isRandomMaze) {
         long elapsedTime = endTime - startTime;
         long minutes = (elapsedTime / 1000) / 60;
         long seconds = (elapsedTime / 1000) % 60;
@@ -31,7 +31,21 @@ public class ExitScreen {
             new TitleScreen().start(new Stage());
         });
 
-        endLayout.getChildren().addAll(congratsText, timeText, backToMainButton);
+        Button continueButton = new Button("Play Another");
+        if (isRandomMaze) {
+            continueButton.setOnAction(e -> {
+                primaryStage.close();
+                try {
+                    new RaycastMaze(true, null).start(new Stage());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            endLayout.getChildren().addAll(congratsText, timeText, continueButton, backToMainButton);
+        } else {
+            endLayout.getChildren().addAll(congratsText, timeText, backToMainButton);
+        }
+
 
         // Load background image
         Image backgroundImage = new Image("Images/end_background.png");
