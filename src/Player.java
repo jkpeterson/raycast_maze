@@ -15,7 +15,9 @@ public class Player {
 	static boolean up, down, right, left;
 	private int exitX;
 	private int exitY;
-	
+
+	static boolean reachedExit = false;
+
 	public Player() {
 		x = 12;
 		y = 12;
@@ -41,6 +43,9 @@ public class Player {
 	}
 	public int getAngle() {
 		return angle;
+	}
+	public static void setReachedExit(boolean reachedExit) {
+		Player.reachedExit = reachedExit;
 	}
 	public void setStartPosition(double startX) {
 		x = startX;
@@ -78,7 +83,7 @@ public class Player {
 			}
 		}
 		if (worldMap[(int)x][(int)y] == 2) {
-			System.out.println("exit");
+			reachedExit = true;
 		}
 		
 	}
