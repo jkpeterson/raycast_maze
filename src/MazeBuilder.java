@@ -3,17 +3,23 @@ import java.io.FileReader;
 import java.util.Scanner;
 
 public class MazeBuilder {
-    //Number of rows, columns, and starting position in the maze.
+	//
+	// Class: MazeBuilder
+	//
+	// Description:
+	// Object that builds a maze from a file, used for level maps that will be consistent
+	// between copies of the game.
     private static int rows, columns;
     //2D array representing the maze.
     private static int[][] maze;
 
-    /**
-     * Reads map data from a txt file and populates the maze array.
-     *
-     * @param filename the location of the file to read.
-     * @throws FileNotFoundException If the specified file is not found.
-     */
+	//
+	// readFile()
+	//
+	// Input: filename of the map to build
+	// Output: Nothing
+	// Uses a scanner to read in the provided file of that filename.
+    // builds the map as a 2D array of ints and stores it in its maze variable.
     public static void readFile(String filename) {
         try {
         	//opens the file and reads it line by line as an array of ints
@@ -32,7 +38,13 @@ public class MazeBuilder {
             e.printStackTrace();
         }
     }
-
+    
+	//
+	// printMaze()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Prints out the maze currently stored in its maze variable
     public static void printMaze() {
         // print maze
         for (int a = 0; a < rows; a++) {

@@ -8,7 +8,22 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class ExitScreen {
+	//
+	// Class: ExitScreen
+	//
+	// Description:
+	// Screen that shows the final time the player took to navigate the maze
+	// Offers buttons to return to title screen or play a new maze.
+	
+	//
+	// showExit()
+	//
+	// Input: primaryStage, start and end times, whether maze was random
+	// Output: Nothing
+	// Handles all of the exit screen, displays the timer results and the continue button
+	// which will either generate a new maze or send the user to the title screen.
     public static void showExit(Stage primaryStage, long startTime, long endTime, Boolean isRandomMaze) {
+
     	//screen is shown after the player completes a maze
         long elapsedTime = endTime - startTime;
         long minutes = (elapsedTime / 1000) / 60;

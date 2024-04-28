@@ -9,11 +9,25 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
 public class Render {
+	//
+	// Class: Render
+	//
+	// Description:
+	// Object that fills the screen with pixels based on the viewpoint of the player.
+	// Uses the raycast method, where each pixel horizontally is associated with a ray,
+	// and the distance that ray travels determines how large to draw the column.
+	// Can render in either flat colors or with textures.
 	BufferedImage[] textures = new BufferedImage[3];
 	Color[][] screen = new Color[RaycastMaze.SCREEN_WIDTH][RaycastMaze.SCREEN_HEIGHT];
 	int texHeight = 128;
     int texWidth = 128;
 	
+	//
+	// Render()	Constructor
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Loads in the texture files for the textured renderer option
 	public Render() {
 		try {
 			//loads all the texture files and adds them to the texture array
@@ -28,6 +42,13 @@ public class Render {
 		}
 	}
 
+	//
+	// update()
+	//
+	// Input: player object, the javafx graphics handler
+	// Output: Nothing
+	// Uses raycast algorithm to figure out what pixels to render to the screen based on the player's
+	// position and angle.
 	public void update(Player player, GraphicsContext gc) {
 		PixelWriter pw = gc.getPixelWriter();
 		screen = new Color[RaycastMaze.SCREEN_WIDTH][RaycastMaze.SCREEN_HEIGHT];
@@ -162,6 +183,12 @@ public class Render {
             
 
 	}
+	//
+	// basicRender()
+	//
+	// Input: current pixel column, the block the ray hit, whether it hit the side, the length of the line
+	// Output: Nothing
+	// Fills the column of pixels with flat colors, shaded based on the side.
 	private void basicRender(int x, int mapX, int mapY, boolean side, int drawStart, int drawEnd) {
 		//iterates through each pixel of the ray's vertical slice
 		//grabs untextured box color of that space and adds a line to the screen array
@@ -173,6 +200,13 @@ public class Render {
         	screen[x][y] = color;
         }
 	}
+	//
+	// basicRender()
+	//
+	// Input: current pixel column, the block the ray hit, whether it hit the side, the length of the line, the texture position data
+	// Output: Nothing
+	// Fills the column of pixels with colors obtained from the texture file.
+	// Needs extra data to find out the exact x-coordinate of the wall that the ray hit.
 	private void textureRender(int x, int mapX, int mapY, boolean side, int drawStart, int drawEnd, int texX, double texStep, double texPos) {
 		//iterates through each pixel of this vertical slice
 		//uses the texture pixels to load the rgb value and set that pixel in the screen array
@@ -191,6 +225,13 @@ public class Render {
 			screen[x][y] = color;
         }
 	}
+	//
+	// drawScreen()
+	//
+	// Input: pixelwriter object to write individual colors quickly to the screen
+	// Output: Nothing
+	// Iterates through the 2D array of pixel colors and fills in the respective pixel with that color
+	// on the screen.
 	public void drawScreen(PixelWriter pw) {
 		//iterates through screen array to render all the pixels set this frame
 		for(int x = 0; x<RaycastMaze.SCREEN_WIDTH; x++) {
@@ -203,6 +244,13 @@ public class Render {
 		}
 		
 	}
+	//
+	// drawFloorAndCeiling()
+	//
+	// Input: javafx graphicscontext
+	// Output: Nothing
+	// Fills the top and bottom half of the screens with different colors to create the illusion of a horizon line.
+	// and separation between the floor and ceiling.  Blocks are rendered on top of this.
     public void drawFloorAndCeiling(GraphicsContext gc) {
             // Set the floor color
             gc.setFill(Color.rgb(100, 100, 100));
@@ -212,6 +260,12 @@ public class Render {
             gc.setFill(Color.rgb(150, 150, 200));
             gc.fillRect(0, 0, RaycastMaze.SCREEN_WIDTH, RaycastMaze.SCREEN_HEIGHT / 2);
     }
+	//
+	// getColor()
+	//
+	// Input: current type of the tile
+	// Output: Nothing
+	// In the basic renderer, each tile is a different color, this is the map for that.
     public static Color getColor(int tileType) {
     	//returns the solid color based on what tile the ray hit
     	//currently only using red and green

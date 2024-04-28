@@ -13,6 +13,13 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class RaycastMaze extends Application {
+	//
+	// Class: RaycastMaze
+	//
+	// Description:
+	// Main screen of the game, builds and stores a map via the requested method.
+	// Contains the central loop of the game, calculating the player movements
+	// and then updating the screen via the renderer.
 
     public static int SCREEN_WIDTH = 800;
     public static int SCREEN_HEIGHT = 600;
@@ -30,7 +37,14 @@ public class RaycastMaze extends Application {
     private AnimationTimer timer;
     public static int[][] worldMap;
     public static boolean textures = true;
-
+    
+	//
+	// RaycastMaze()	Constructor
+	//
+	// Input: boolean if the maze should be random, and the string of the current map
+	// Output: Nothing
+	// The scene needs to know whether it should generator or build a map from a file
+    // if it needs to build from a file, it will read in the selected map string for that.
     public RaycastMaze(boolean isRandomMaze, String selectedMap) {
         this.isRandomMaze = isRandomMaze;
         this.selectedMap = selectedMap;
@@ -41,7 +55,13 @@ public class RaycastMaze extends Application {
         SCREEN_HEIGHT = height;
     }
 
-    @Override
+	//
+	// start()
+	//
+	// Input: javafx stage
+	// Output: Nothing
+	// Does all the necessary prefacing to start the maze game, generating the maze, 
+    // creating the player object, and setting up the keyboard input.
     public void start(Stage primaryStage) throws Exception {
     	//creates player, renderer, and javafx canvas
         player = new Player();
@@ -86,7 +106,12 @@ public class RaycastMaze extends Application {
         });
         startGameLoop(worldMap, primaryStage);
     }
-
+	//
+	// backButton()
+	//
+	// Input: javafx stage
+	// Output: javafx button
+	// Creates the button in the upper right corner to quit the game and return to the title screen
     private Button backButton(Stage primaryStage) {
     	//performs all the necessary actions to return to the title screen menu
         Image exitIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("Images/exit_icon.png")));
@@ -109,7 +134,14 @@ public class RaycastMaze extends Application {
         });
         return backButton;
     }
-
+	//
+	// startGameLoop()
+	//
+	// Input: current game map, javafx stage
+	// Output: Nothing
+	// This is the actual primary game loop itself, creates a loop that calculates every frame
+    // of the game.  First handling the movement of the player, and then rendering the screen
+    // based on this new position.
     private void startGameLoop(int[][] worldMap, Stage primaryStage) {
     	//primary game loop starts here
         Player.setReachedExit(false);
@@ -143,6 +175,12 @@ public class RaycastMaze extends Application {
         timer.start();
     }
 
+	//
+	// stopGameLoop()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Called when the player wins the maze or quits, exits the main loop
     private void stopGameLoop() {
         if (timer != null) {
             timer.stop();

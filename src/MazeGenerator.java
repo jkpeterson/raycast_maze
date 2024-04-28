@@ -2,13 +2,24 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.util.HashMap;
 public class MazeGenerator {
-	
+	//
+	// Class: MazeGenerator
+	//
+	// Description:
+	// Object that generates a maze using an implementation of prim's algorithm, used to
+	// create an infinite number of mazes for the player to navigate.
 	final int WIDTH = 24;
 	final int HEIGHT = 24;
 	private int[][] baseMap = new int[WIDTH][HEIGHT];
 	public double startX;
 	private int exitX;
 	
+	//
+	// MazeGenerator()	Constructor
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Initializes the generator object with a maze of all solid blocks.
 	public MazeGenerator() {
 		for(int i = 0; i < WIDTH; i++) {
 			for(int j = 0; j < HEIGHT; j++) {
@@ -16,7 +27,12 @@ public class MazeGenerator {
 			}
 		}
 	}
-
+	//
+	// makeNewMaze()
+	//
+	// Input: Nothing
+	// Output: 2D Array of ints representing the maze
+	// Uses prim's maze generator algorithm to build a random maze from a map full of solid blocks.
 	public int[][] makeNewMaze() {
 		//generates mazes using prim's maze algorithm
 		Random rand = new Random();
@@ -59,6 +75,13 @@ public class MazeGenerator {
 		printMaze();
 		return baseMap;
 	}
+	//
+	// getSurroundingWalls()
+	//
+	// Input: x and y coordinates of a tile
+	// Output: Hashmap containing all the surrounding walls mapped to the cell it blocks
+	// Used for prim's algorithm, for each tile that is checked, a set of wall blocks
+	// and the cells one more block over are needed. This ensures hallways are a single tile wide.
 	HashMap<int[],int[]> getSurroundingWalls(int x, int y) {
 		//a wall/cell combo is considered valid if the cell is currently a solid block
 		//and the wall is not on an edge of the map
@@ -77,6 +100,13 @@ public class MazeGenerator {
         }
         return surroundingWalls;
 	}
+	//
+	// fillEdges()
+	//
+	// Input: 2D array of ints representing a generated map
+	// Output: 2D array of ints representing a finished map
+	// After a maze is done being generated, the edges are filled in with solid tiles
+	// so that the player can't escape the boundaries of the maze.
 	int[][] fillEdges(int[][] map) {
 		for(int x = 0; x < WIDTH; x++) {
 			map[x][0] = 1;
@@ -88,6 +118,12 @@ public class MazeGenerator {
 		}
 		return map;
 	}
+	//
+	// printMaze()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Prints out the maze currently stored in its maze variable
 	public void printMaze() {
 		for(int y = 0; y < HEIGHT; y++) {
 			for(int x = 0; x < WIDTH; x++) {

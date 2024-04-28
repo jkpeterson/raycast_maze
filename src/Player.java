@@ -1,9 +1,11 @@
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-//import javafx.scene.input.KeyEvent;
-
 public class Player {
-	
+	//
+	// Class: Player
+	//
+	// Description:
+	// Object that represents the player character.  Takes in the javafx inputs and performs the
+	// movement calculations based on the elapsed time of the previous frame.
+	// Controls are tank-like, left and right rotate the view and forward and back move.
 	
 	public static double x;
 	public static double y;
@@ -16,6 +18,12 @@ public class Player {
 
 	static boolean reachedExit = false;
 
+	//
+	// Player()	Constructor
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Player's default position is in the center of the maze at angle 0.
 	public Player() {
 		x = 12;
 		y = 12;
@@ -34,9 +42,11 @@ public class Player {
 		return Math.sin(Math.toRadians(angle));
 	}
 	public double getPlaneX() {
+		//used to get the position of the camera plane
 		return -Math.sin(Math.toRadians(angle));
 	}
 	public double getPlaneY() {
+		//used to get the position of the camera plane
 		return Math.cos(Math.toRadians(angle));
 	}
 	public int getAngle() {
@@ -45,12 +55,27 @@ public class Player {
 	public static void setReachedExit(boolean reachedExit) {
 		Player.reachedExit = reachedExit;
 	}
+	//
+	// setStartPosition()
+	//
+	// Input: starting x position
+	// Output: Nothing
+	// The player always starts at the top of the maze facing south.
+	// The only thing that changes is the x value of the start position,
+	// so this function will reset the player and place them in the given start.
 	public void setStartPosition(double startX) {
 		//every map has a unique starting x value, but all start at a y value of 1.5
 		x = startX;
 		y = 1.5;
 		angle = 180;
 	}
+	//
+	// move()
+	//
+	// Input: deltaTime of last frame, the current map, the javafx inputs from the keyboard
+	// Output: Nothing
+	// Runs calculations every single frame to change the angle, speed, and duration of the previous frame to find the
+	// players new position.
 	public void move(double deltaTime, int[][] worldMap, Boolean up, Boolean down, Boolean right, Boolean left) {
 		//pulls in keyboard inputs from the javafx canvas
 		//left and right simply change the camera angle based on the turn speed and millis

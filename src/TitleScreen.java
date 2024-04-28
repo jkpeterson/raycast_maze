@@ -23,12 +23,23 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TitleScreen extends Application {
+	//
+	// Class: TitleScreen
+	//
+	// Description:
+	// Title screen of the game, gives the player options to start the game or
+	// change renderer settings.  Allows the player to view the controls and credits.
 
     private Stage primaryStage;
     private BorderPane root;
     private VBox mainMenu;
 
-    @Override
+	//
+	// start()
+	//
+	// Input: javafx stage
+	// Output: Nothing
+	// Handles the primary title screen menu.
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
@@ -68,6 +79,12 @@ public class TitleScreen extends Application {
         primaryStage.show();
     }
 
+	//
+	// textButton()
+	//
+	// Input: text that should display on the button
+	// Output: Nothing
+	// Helper function to create a button of a consistent style for the menus
     private Button textButton(String buttonText) {
         Button button = new Button(buttonText);
         button.setStyle("-fx-text-fill: #CCCCCC; -fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 16px;");
@@ -82,6 +99,12 @@ public class TitleScreen extends Application {
         return button;
     }
 
+	//
+	// startRandomMaze()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to play game with a randomized maze
     private void startRandomMaze() {
     	//starts the game loop while telling it to generate a maze randomly
         try {
@@ -92,7 +115,12 @@ public class TitleScreen extends Application {
             e.printStackTrace();
         }
     }
-
+	//
+	// loadMazeFromFile()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to play game with a maze read in via file
     private void loadMazeFromFile(String mapName) {
     	//starts the game loop while passing in the map to load
         try {
@@ -104,7 +132,12 @@ public class TitleScreen extends Application {
         }
     }
 
-
+	//
+	// showPlay()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to show random map option and file maze options
     private void showPlay() {
     	//when the play button is pressed, it shows a list of maps to play,
     	//as well as the option for a random map
@@ -129,9 +162,13 @@ public class TitleScreen extends Application {
     }
 
     private String selectedResolution = "Select";
+	//
+	// startRandomMaze()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to show menu for resolution and texture options
     private void showOptions() {
-    	//shows the options menu
-    	//the player can select the resolution and if they want textured graphics
         Text optionsTitle = new Text("Options");
         optionsTitle.setFont(new Font(25));
         optionsTitle.setStyle("-fx-fill: white;");
@@ -169,8 +206,13 @@ public class TitleScreen extends Application {
         root.setCenter(optionsPane);
     }
 
+	//
+	// showGuide()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to show game controls
     private void showGuide() {
-    	//shows basic instructions for the player
         Text creditsText = new Text("Guide:\n\nMovement Controls:\nW: Move Forward\nS: Move Backward\nCamera Rotation Controls:\nA: Rotate Camera Left\nD: Rotate Camera Right\nGameplay Tips:\nNavigate through the maze cautiously, pay attention to details in the environment.");
         creditsText.setFont(new Font(15));
         creditsText.setStyle("-fx-fill: white;");
@@ -184,8 +226,13 @@ public class TitleScreen extends Application {
         root.setCenter(creditsPane);
     }
 
+	//
+	// showCredits()
+	//
+	// Input: Nothing
+	// Output: Nothing
+	// Button to show developer credits
     private void showCredits() {
-    	//shows the developer credits
         Text creditsText = new Text("Credits:\n");
         creditsText.setFont(new Font(20));
         creditsText.setStyle("-fx-fill: white;");
