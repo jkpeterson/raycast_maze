@@ -28,15 +28,8 @@ public class RaycastMaze extends Application {
     private boolean isRandomMaze;
     private String selectedMap;
     private AnimationTimer timer;
-
-    private static void sleep(long time) {
-        if (time > 0)
-            try {
-                Thread.sleep(time);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-    }
+    public static int[][] worldMap;
+    public static boolean textures = true;
 
     public RaycastMaze(boolean isRandomMaze, String selectedMap) {
         this.isRandomMaze = isRandomMaze;
@@ -50,14 +43,14 @@ public class RaycastMaze extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
+    	//creates player, renderer, and javafx canvas
         player = new Player();
         render = new Render();
         Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         Pane root = new Pane(canvas);
 
-        int[][] worldMap;
+        //generates a random maze, or loads the selected maze from the menu
         if (isRandomMaze) {
             // Generate a random maze
             MazeGenerator mg = new MazeGenerator();
@@ -70,10 +63,11 @@ public class RaycastMaze extends Application {
             player.setStartPosition(MazeBuilder.getRows()-1.5);
         }
 
-        // Exit button to Title Screen
+        //exit button to title screen
         Button exitButton = backButton(primaryStage);
         root.getChildren().add(exitButton);
-
+        
+        //enables keyboard inputs
         Scene scene = new Scene(root);
         primaryStage.setTitle("Raycast 3D Maze");
         primaryStage.setScene(scene);
@@ -94,6 +88,7 @@ public class RaycastMaze extends Application {
     }
 
     private Button backButton(Stage primaryStage) {
+    	//performs all the necessary actions to return to the title screen menu
         Image exitIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("Images/exit_icon.png")));
         ImageView exitImageView = new ImageView(exitIcon);
         exitImageView.setFitWidth(30);
@@ -116,26 +111,32 @@ public class RaycastMaze extends Application {
     }
 
     private void startGameLoop(int[][] worldMap, Stage primaryStage) {
+    	//primary game loop starts here
         Player.setReachedExit(false);
+        //starts maze timer
         startTime = System.currentTimeMillis();
 
         timer = new AnimationTimer() {
             @Override
             public void handle(long arg0) {
+            	//calculates the time the previous frame took
+            	//this is so movement will be independent of the framerate
                 long currentTime = System.currentTimeMillis();
                 deltaTime = (currentTime - lastTime) / 1_000.0;
                 lastTime = currentTime;
-                //do stuff
+                //clears the screen, draws the floor and ceiling to prepare for new frame
                 gc.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
                 render.drawFloorAndCeiling(gc);
+                //player movement happens, then needs to check if the player won the maze
                 player.move(deltaTime, worldMap, up, down, right, left);
                 if (Player.reachedExit) {
                     endTime = System.currentTimeMillis();
                     stopGameLoop();
                     ExitScreen.showExit(primaryStage, startTime, endTime, isRandomMaze);
                 }
-                render.update(player, worldMap, gc);
-                sleep(LOOP_LENGTH - (long) deltaTime);
+                //if the player didn't win the maze, we render the graphics for that frame
+                //based on the new position of the player
+                render.update(player, gc);
             }
 
         };

@@ -16,6 +16,8 @@ public class MazeBuilder {
      */
     public static void readFile(String filename) {
         try {
+        	//opens the file and reads it line by line as an array of ints
+        	//the game uses as map data
             FileReader file = new FileReader(filename);
             Scanner input = new Scanner(file);
             rows = input.nextInt();

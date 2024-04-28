@@ -16,7 +16,7 @@ import javafx.scene.text.Font;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-
+import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -83,6 +83,7 @@ public class TitleScreen extends Application {
     }
 
     private void startRandomMaze() {
+    	//starts the game loop while telling it to generate a maze randomly
         try {
             RaycastMaze raycastMaze = new RaycastMaze(true, "");
             raycastMaze.start(new Stage());
@@ -93,6 +94,7 @@ public class TitleScreen extends Application {
     }
 
     private void loadMazeFromFile(String mapName) {
+    	//starts the game loop while passing in the map to load
         try {
             RaycastMaze raycastMaze = new RaycastMaze(false, mapName);
             raycastMaze.start(new Stage());
@@ -104,6 +106,8 @@ public class TitleScreen extends Application {
 
 
     private void showPlay() {
+    	//when the play button is pressed, it shows a list of maps to play,
+    	//as well as the option for a random map
         List<String> mapNames = Arrays.asList("demoMap", "level1", "level2");
         VBox mapButtons = new VBox(20);
         mapButtons.setAlignment(Pos.CENTER);
@@ -126,6 +130,8 @@ public class TitleScreen extends Application {
 
     private String selectedResolution = "Select";
     private void showOptions() {
+    	//shows the options menu
+    	//the player can select the resolution and if they want textured graphics
         Text optionsTitle = new Text("Options");
         optionsTitle.setFont(new Font(25));
         optionsTitle.setStyle("-fx-fill: white;");
@@ -147,17 +153,24 @@ public class TitleScreen extends Application {
                 RaycastMaze.setScreenResolution(width, height);
             }
         });
+        ToggleButton textureButton = new ToggleButton("Textures");
+        //ensures the toggle box reflects the current value
+        textureButton.setSelected(RaycastMaze.textures);
+        textureButton.setOnAction(e -> {
+        	RaycastMaze.textures = !RaycastMaze.textures;
+        });
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> root.setCenter(mainMenu));
 
         VBox optionsPane = new VBox(20);
-        optionsPane.getChildren().addAll(optionsTitle, resolutionLabel, resolutionComboBox, applyButton, backButton);
+        optionsPane.getChildren().addAll(optionsTitle, resolutionLabel, resolutionComboBox, textureButton, applyButton, backButton);
         optionsPane.setAlignment(Pos.CENTER);
         root.setCenter(optionsPane);
     }
 
     private void showGuide() {
+    	//shows basic instructions for the player
         Text creditsText = new Text("Guide:\n\nMovement Controls:\nW: Move Forward\nS: Move Backward\nCamera Rotation Controls:\nA: Rotate Camera Left\nD: Rotate Camera Right\nGameplay Tips:\nNavigate through the maze cautiously, pay attention to details in the environment.");
         creditsText.setFont(new Font(15));
         creditsText.setStyle("-fx-fill: white;");
@@ -172,6 +185,7 @@ public class TitleScreen extends Application {
     }
 
     private void showCredits() {
+    	//shows the developer credits
         Text creditsText = new Text("Credits:\n");
         creditsText.setFont(new Font(20));
         creditsText.setStyle("-fx-fill: white;");

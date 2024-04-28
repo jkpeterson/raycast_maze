@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 public class ExitScreen {
     public static void showExit(Stage primaryStage, long startTime, long endTime, Boolean isRandomMaze) {
+    	//screen is shown after the player completes a maze
         long elapsedTime = endTime - startTime;
         long minutes = (elapsedTime / 1000) / 60;
         long seconds = (elapsedTime / 1000) % 60;

@@ -13,8 +13,6 @@ public class Player {
 	static final int MAP_WIDTH = 24;
 	static final int MAP_HEIGHT = 24;
 	static boolean up, down, right, left;
-	private int exitX;
-	private int exitY;
 
 	static boolean reachedExit = false;
 
@@ -48,12 +46,15 @@ public class Player {
 		Player.reachedExit = reachedExit;
 	}
 	public void setStartPosition(double startX) {
+		//every map has a unique starting x value, but all start at a y value of 1.5
 		x = startX;
 		y = 1.5;
 		angle = 180;
 	}
 	public void move(double deltaTime, int[][] worldMap, Boolean up, Boolean down, Boolean right, Boolean left) {
-		//System.out.println(x+","+y+" Angle: "+angle);
+		//pulls in keyboard inputs from the javafx canvas
+		//left and right simply change the camera angle based on the turn speed and millis
+		//of the previous frame
         if (left) {
         	angle -= TURN_SPEED * deltaTime;
         	if(angle < 0) {
@@ -66,6 +67,9 @@ public class Player {
 				angle -= 360;
 			}
 		}
+		//up and down change the position of the player based on their angle,
+		//move speed, and millis of the previous frame
+		//this also detects if the new tile they would enter is walkable (either 0 which is air, or 2 which is the exit)
 		if (up) {
             double newX = x + (MOVE_SPEED * deltaTime * getDirX());
             double newY = y + (MOVE_SPEED * deltaTime * getDirY());
@@ -82,6 +86,7 @@ public class Player {
 				y = newY;
 			}
 		}
+		//if the player is inside the exit tile, the end screen is triggered
 		if (worldMap[(int)x][(int)y] == 2) {
 			reachedExit = true;
 		}
