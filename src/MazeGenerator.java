@@ -25,7 +25,7 @@ public class MazeGenerator {
 		int currX = rand.nextInt(WIDTH);
 		int currY = 1;
 		startX = (double)currX;
-		//creates a map from walls of the maze to cells of the maze
+		//creates a hashmap from walls of the maze to cells of the maze
 		HashMap<int[], int[]> cellsToCheck = new HashMap<int[], int[]>();
 		cellsToCheck.put(new int[]{currX, currY}, new int[] {currX, currY});
 		while(!cellsToCheck.isEmpty()) {
@@ -36,27 +36,13 @@ public class MazeGenerator {
 	        cellsToCheck.remove(wall);
 	        currX = cell[0];
 	        currY = cell[1];
-	        //if that cell is currently a solid block, it empties it
-	        //it will then add all of it's surrounding walls to the map as a key
-	        //with the cell that wall is blocking off as the value
-	        //but only if that cell is also solid
+	        //if that cell is currently a solid block, it empties it and its connecting wall
+	        //it will then check for all the valid wall/cell combos around that cell and add them to the hashmap
 	        if ( baseMap[currX][currY] == 1 )
 	        {
 	            baseMap[wall[0]][wall[1]] = 0;
 	            baseMap[currX][currY] = 0;
-	            if ( currX >= 2 && baseMap[currX-2][currY] == 1 ) {
-	            	cellsToCheck.put(new int[]{currX-1,currY},new int[] {currX-2,currY});
-	            }
-	            if ( currY >= 2 && baseMap[currX][currY-2] == 1 ) {
-	            	cellsToCheck.put(new int[]{currX,currY-1}, new int[] {currX,currY-2});
-	            }   
-	            if ( currX < WIDTH-2 && baseMap[currX+2][currY] == 1 ) {
-	            	cellsToCheck.put(new int[]{currX+1,currY}, new int[] {currX+2,currY});
-	            }   
-	            if ( currY < HEIGHT-2 && baseMap[currX][currY+2] == 1 ) {
-	            	cellsToCheck.put(new int[]{currX,currY+1}, new int[] {currX,currY+2});
-	            }
-	                
+	            cellsToCheck.putAll(getSurroundingWalls(currX, currY));
 	        }
 		}
 		//eventually the algorithm will run out of cell/wall combinations that fit the above criteria
@@ -73,7 +59,25 @@ public class MazeGenerator {
 		printMaze();
 		return baseMap;
 	}
-	public int[][] fillEdges(int[][] map) {
+	HashMap<int[],int[]> getSurroundingWalls(int x, int y) {
+		//a wall/cell combo is considered valid if the cell is currently a solid block
+		//and the wall is not on an edge of the map
+		HashMap<int[], int[]> surroundingWalls = new HashMap<int[], int[]>();
+        if ( x >= 2 && baseMap[x-2][y] == 1 ) {
+        	surroundingWalls.put(new int[]{x-1,y},new int[] {x-2,y});
+        }
+        if ( y >= 2 && baseMap[x][y-2] == 1 ) {
+        	surroundingWalls.put(new int[]{x,y-1}, new int[] {x,y-2});
+        }   
+        if ( x < WIDTH-2 && baseMap[x+2][y] == 1 ) {
+        	surroundingWalls.put(new int[]{x+1,y}, new int[] {x+2,y});
+        }   
+        if ( y < HEIGHT-2 && baseMap[x][y+2] == 1 ) {
+        	surroundingWalls.put(new int[]{x,y+1}, new int[] {x,y+2});
+        }
+        return surroundingWalls;
+	}
+	int[][] fillEdges(int[][] map) {
 		for(int x = 0; x < WIDTH; x++) {
 			map[x][0] = 1;
 			map[x][HEIGHT-1] = 1;
